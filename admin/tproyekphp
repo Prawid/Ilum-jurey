@@ -1,0 +1,44 @@
+<?php
+include "../config.php";
+
+
+//koneksi database 
+
+  $ID_Proyek = $_POST['ID_Proyek'];
+  $Nama_Proyek = $_POST['Nama_Proyek'];
+  $Deskripsi_Proyek = $_POST['Deskripsi_Proyek'];
+  $filename1 = $_FILES['gambar']['name'];
+  $tmp_name1 = $_FILES['gambar']['tmp_name'];
+
+  $type1 = explode('.', $filename1);
+
+
+  $gambar = $type1[1];
+
+  //Menyimpan gambar inputan pada file data-barang
+  $newname1 = 'upload1' . time() . '.' . $gambar;
+
+  //Tipe ekstensi gambar
+  $tipe_diizinkan = array('jpg', 'jpeg', 'png', 'gif');
+  //Fungsi apabila tipe file tidak sesuai dengan yang diizinkan
+  if (!in_array($gambar, $tipe_diizinkan) ) {
+      echo 'Format file tidak diizinkan';
+  } else {
+      //Mengupload gambar ke file data barang
+      move_uploaded_file($tmp_name1, 'upload/' . $newname1);
+
+
+      $insert = mysqli_query($sambungin, "INSERT INTO data_carwash VALUES(
+                                      null,
+                                      '" . $ID_Proyek . "',
+                                      '" . $Nama_Proyek . "',
+                                      '" . $Deskripsi_Proyek . "',
+                                      '" . $newname1 . "')"); 
+                                      
+      if ($insert) {
+          echo '<script> alert("Berhasil menambahkan data") </script>';
+          echo '<script>window.location="proyek.php" </script>';
+      } else {
+          echo 'Gagal menambahkan data' . mysqli_error($sambungin);
+      }
+    }
